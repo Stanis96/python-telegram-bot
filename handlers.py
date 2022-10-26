@@ -1,8 +1,5 @@
-from settings import URL_API, EMOJI
-from utils import get_menu_buttons, validate_age
-import requests
-
-url = URL_API
+from settings import EMOJI, BARS, BEERS
+from utils import get_menu_buttons, validate_age, get_query
 
 
 def get_start(update, context):
@@ -27,27 +24,28 @@ def get_validate_answer(update, context):
 
 
 def get_all_bars(update, context):
-    pass
-
-
-def get_user_location(update, context):
-    coordinates = update.message.location
-    print(coordinates)
+    bars = get_query(BARS[0])
+    bars = bars["results"]
+    for bar in bars:
+        text = bar["name"]
+        update.message.reply_text(text)
 
 
 def get_all_beers(update, context):
-    url = URL_API
-    beers = requests.get(url).json()
-    # print(type(beers))
-    print(beers["results"][0])
+    beers = get_query(BEERS[0])
     beers = beers["results"]
     for beer in beers:
         text = (
             beer["name"]
             + "\n\n"
-            + "Цена: "
+            + "Цена:"
             + str(int(beer["price"] / 200))
             + "\n\n"
             + beer["description"]
         )
         update.message.reply_text(text)
+
+
+def get_user_location(update, context):
+    coordinates = update.message.location
+    print(coordinates)
